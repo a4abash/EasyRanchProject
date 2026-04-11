@@ -1,4 +1,5 @@
 {% extends 'layouts/base.html' %}
+{% load static %}
 
 {% block content %}
 <!-- Navigation -->
@@ -6,7 +7,7 @@
         <div class="container">
             <div class="nav-container">
                 <a href="#hero" class="logo">
-                    <img src="EasyRanch Logo/ER Logo.png" alt="EasyRanch Logo" />
+                    <img src="{% static 'easyranch/er-logo.png' %}" alt="EasyRanch Logo" />
                     EasyRanch
                 </a>
                 <ul class="nav-menu">
@@ -24,7 +25,7 @@
     <!-- Hero Section -->
     <section id="hero" class="hero">
         <div class="hero-content">
-            <img src="EasyRanch Logo/ER Logo.png" alt="EasyRanch" />
+            <img src="{% static 'easyranch/er-logo.png' %}" alt="EasyRanch" />
             <h1>Smart Ranch Management Revolution</h1>
             <p class="subtitle">
                 AI-Powered Livestock Monitoring & Disease Detection for Modern
@@ -183,7 +184,7 @@
             <div class="gallery-grid">
                 <div class="gallery-item fade-in">
                     <div class="gallery-image" style="
-                background-image: url(&quot;images/Cattle Health Monitoring.jpg&quot;);
+                background-image: url('{% static "images/Cattle Health Monitoring.jpg" %}');
               "></div>
                     <div class="gallery-content">
                         <h3>Cattle Health Monitoring</h3>
@@ -192,7 +193,7 @@
                 </div>
                 <div class="gallery-item fade-in">
                     <div class="gallery-image" style="
-                background-image: url(&quot;images/Livestock GPS Tracking.jpg&quot;);
+                background-image: url('{% static "images/Livestock GPS Tracking.jpg" %}');
               "></div>
                     <div class="gallery-content">
                         <h3>Livestock GPS Tracking</h3>
@@ -201,7 +202,7 @@
                 </div>
                 <div class="gallery-item fade-in">
                     <div class="gallery-image" style="
-                background-image: url(&quot;images/Smart Feed Management.jpg&quot;);
+                background-image: url('{% static "images/Smart Feed Management.jpg" %}');
               "></div>
                     <div class="gallery-content">
                         <h3>Smart Feed Management</h3>
@@ -210,7 +211,7 @@
                 </div>
                 <div class="gallery-item fade-in">
                     <div class="gallery-image" style="
-                background-image: url(&quot;images/Ranch Analytics Dashboard.jpg&quot;);
+                background-image: url('{% static "images/Ranch Analytics Dashboard.jpg" %}');
               "></div>
                     <div class="gallery-content">
                         <h3>Ranch Analytics Dashboard</h3>
@@ -219,7 +220,7 @@
                 </div>
                 <div class="gallery-item fade-in">
                     <div class="gallery-image" style="
-                background-image: url(&quot;images/Pasture Management.jpg&quot;);
+                background-image: url('{% static "images/Pasture Management.jpg" %}');
               "></div>
                     <div class="gallery-content">
                         <h3>Pasture Management</h3>
@@ -228,7 +229,7 @@
                 </div>
                 <div class="gallery-item fade-in">
                     <div class="gallery-image" style="
-                background-image: url(&quot;images/Mobile Ranch Management.jpg&quot;);
+                background-image: url('{% static "images/Mobile Ranch Management.jpg" %}');
               "></div>
                     <div class="gallery-content">
                         <h3>Mobile Ranch Management</h3>
@@ -277,7 +278,7 @@
                     </p>
                 </div>
                 <div class="about-image">
-                    <img src="images/About EasyRanch.png" alt="About EasyRanch" />
+                    <img src="{% static 'images/About EasyRanch.png' %}" alt="About EasyRanch" />
                 </div>
             </div>
         </div>
@@ -358,7 +359,7 @@
             <div class="footer-bottom">
                 <div class="footer-branding">
                     <a href="https://innova8s.com/" target="_blank" rel="noopener" style="text-decoration: none">
-                        <img src="Innova8s_Logo_Inverse.svg" alt="Innova8s" />
+                        <img src="{% static 'easyranch/Innova8s-ransparent-ogo-original.png' %}" alt="Innova8s" />
                     </a>
                     <p>
                         &copy; 2025 EasyRanch. All rights reserved. Revolutionizing ranch
@@ -395,7 +396,7 @@
     <div class="chatbot-container" id="chatbotContainer">
         <div class="chatbot-header">
             <div class="chatbot-header-content">
-                <img src="EasyRanch Logo/ER Logo.png" alt="EasyRanch" class="chatbot-logo" />
+                <img src="{% static 'easyranch/er-logo.png' %}" alt="EasyRanch" class="chatbot-logo" />
                 <div class="chatbot-title">
                     <h3>EasyRanch Assistant</h3>
                     <span class="chatbot-status">Online</span>
@@ -422,6 +423,6 @@
         </div>
     </div>
 
-    <script src="dataset.js"></script>
-    <script src="script.js"></script>
+    <script src="{% static 'dataset.js' %}"></script>
+    <script src="{% static 'script.js' %}"></script>
 {% endblock %}
