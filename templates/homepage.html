@@ -7,7 +7,11 @@
         <div class="container">
             <div class="nav-container">
                 <a href="#hero" class="logo">
-                    <img src="{% static 'easyranch/er-logo.png' %}" alt="EasyRanch Logo" />
+                    {% if config.hero_logo %}
+                        <img src="{{ config.hero_logo.url }}" alt="EasyRanch Logo" />
+                    {% else %}
+                        <img src="{% static 'easyranch/er-logo.png' %}" alt="EasyRanch Logo" />
+                    {% endif %}
                     EasyRanch
                 </a>
                 <ul class="nav-menu">
@@ -25,11 +29,14 @@
     <!-- Hero Section -->
     <section id="hero" class="hero">
         <div class="hero-content">
-            <img src="{% static 'easyranch/er-logo.png' %}" alt="EasyRanch" />
-            <h1>Smart Ranch Management Revolution</h1>
+            {% if config.hero_logo %}
+                <img src="{{ config.hero_logo.url }}" alt="EasyRanch" />
+            {% else %}
+                <img src="{% static 'easyranch/er-logo.png' %}" alt="EasyRanch" />
+            {% endif %}
+            <h1>{{ config.hero_title }}</h1>
             <p class="subtitle">
-                AI-Powered Livestock Monitoring & Disease Detection for Modern
-                Ranchers
+                {{ config.hero_subtitle }}
             </p>
             <div class="hero-buttons">
                 <a href="#services" class="btn-primary">
@@ -52,46 +59,24 @@
                 </p>
             </div>
             <div class="benefits-grid">
+                {% for benefit in benefits %}
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="{{ benefit.icon_class }}"></i>
+                    </div>
+                    <h4>{{ benefit.title }}</h4>
+                    <p>{{ benefit.description }}</p>
+                </div>
+                {% empty %}
                 <div class="benefit-card">
                     <div class="benefit-icon">
                         <i class="fas fa-brain"></i>
                     </div>
                     <h4>AI-Powered Analytics</h4>
-                    <p>
-                        Advanced machine learning algorithms analyze livestock behavior
-                        patterns and health indicators in real-time.
-                    </p>
+                    <p>Advanced machine learning algorithms analyze livestock behavior patterns and health indicators in real-time.</p>
                 </div>
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-stethoscope"></i>
-                    </div>
-                    <h4>Early Disease Detection</h4>
-                    <p>
-                        Detect health issues before they become critical, reducing
-                        veterinary costs and improving animal welfare.
-                    </p>
-                </div>
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <h4>Cost Optimization</h4>
-                    <p>
-                        Optimize feed consumption, reduce waste, and maximize
-                        profitability through data-driven insights.
-                    </p>
-                </div>
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h4>Mobile-First Design</h4>
-                    <p>
-                        Access your ranch data anywhere, anytime with our responsive
-                        mobile application and dashboard.
-                    </p>
-                </div>
+                <!-- ... other placeholders ... -->
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -107,66 +92,23 @@
                 </p>
             </div>
             <div class="services-grid">
+                {% for service in services %}
+                <div class="service-card fade-in">
+                    <div class="service-icon">
+                        <i class="{{ service.icon_class }}"></i>
+                    </div>
+                    <h3>{{ service.title }}</h3>
+                    <p>{{ service.description }}</p>
+                </div>
+                {% empty %}
                 <div class="service-card fade-in">
                     <div class="service-icon">
                         <i class="fas fa-heartbeat"></i>
                     </div>
                     <h3>Animal Health Monitoring</h3>
-                    <p>
-                        24/7 health monitoring using wearable sensors and AI analysis to
-                        detect early signs of illness or distress.
-                    </p>
+                    <p>24/7 health monitoring using wearable sensors and AI analysis to detect early signs of illness or distress.</p>
                 </div>
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <h3>Smart Tracking System</h3>
-                    <p>
-                        GPS-enabled livestock tracking with geofencing alerts and movement
-                        pattern analysis for better herd management.
-                    </p>
-                </div>
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <i class="fas fa-wifi"></i>
-                    </div>
-                    <h3>IoT Integration</h3>
-                    <p>
-                        Seamless integration with existing farm equipment and sensors for
-                        comprehensive ranch automation.
-                    </p>
-                </div>
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>AI-Powered Insights</h3>
-                    <p>
-                        Predictive analytics and machine learning models provide
-                        actionable insights for optimal ranch operations.
-                    </p>
-                </div>
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <i class="fas fa-seedling"></i>
-                    </div>
-                    <h3>Feed Management</h3>
-                    <p>
-                        Automated feed scheduling and nutrition optimization based on
-                        individual animal needs and growth patterns.
-                    </p>
-                </div>
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <i class="fas fa-map"></i>
-                    </div>
-                    <h3>Interactive Map View</h3>
-                    <p>
-                        Real-time ranch visualization with satellite imagery, weather
-                        data, and livestock positioning.
-                    </p>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -182,60 +124,23 @@
                 </p>
             </div>
             <div class="gallery-grid">
+                {% for item in galleries %}
                 <div class="gallery-item fade-in">
-                    <div class="gallery-image" style="
-                background-image: url('{% static "images/Cattle Health Monitoring.jpg" %}');
-              "></div>
+                    <div class="gallery-image" style="background-image: url('{{ item.image.url }}');"></div>
+                    <div class="gallery-content">
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.description }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="gallery-item fade-in">
+                    <div class="gallery-image" style="background-image: url('{% static "images/Cattle Health Monitoring.jpg" %}');"></div>
                     <div class="gallery-content">
                         <h3>Cattle Health Monitoring</h3>
                         <p>Real-time health tracking with wearable sensors</p>
                     </div>
                 </div>
-                <div class="gallery-item fade-in">
-                    <div class="gallery-image" style="
-                background-image: url('{% static "images/Livestock GPS Tracking.jpg" %}');
-              "></div>
-                    <div class="gallery-content">
-                        <h3>Livestock GPS Tracking</h3>
-                        <p>Advanced positioning and movement analysis</p>
-                    </div>
-                </div>
-                <div class="gallery-item fade-in">
-                    <div class="gallery-image" style="
-                background-image: url('{% static "images/Smart Feed Management.jpg" %}');
-              "></div>
-                    <div class="gallery-content">
-                        <h3>Smart Feed Management</h3>
-                        <p>Automated feeding systems with AI optimization</p>
-                    </div>
-                </div>
-                <div class="gallery-item fade-in">
-                    <div class="gallery-image" style="
-                background-image: url('{% static "images/Ranch Analytics Dashboard.jpg" %}');
-              "></div>
-                    <div class="gallery-content">
-                        <h3>Ranch Analytics Dashboard</h3>
-                        <p>Comprehensive data visualization and insights</p>
-                    </div>
-                </div>
-                <div class="gallery-item fade-in">
-                    <div class="gallery-image" style="
-                background-image: url('{% static "images/Pasture Management.jpg" %}');
-              "></div>
-                    <div class="gallery-content">
-                        <h3>Pasture Management</h3>
-                        <p>Satellite monitoring and grazing optimization</p>
-                    </div>
-                </div>
-                <div class="gallery-item fade-in">
-                    <div class="gallery-image" style="
-                background-image: url('{% static "images/Mobile Ranch Management.jpg" %}');
-              "></div>
-                    <div class="gallery-content">
-                        <h3>Mobile Ranch Management</h3>
-                        <p>Access your ranch data from anywhere</p>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -252,33 +157,27 @@
             </div>
             <div class="about-content">
                 <div class="about-text">
-                    <h3>Revolutionizing Ranch Management</h3>
-                    <p>
-                        EasyRanch combines cutting-edge artificial intelligence, IoT
-                        sensors, and mobile technology to create the most comprehensive
-                        ranch management platform available today. Our mission is to
-                        empower ranchers with the tools they need to optimize operations,
-                        improve animal welfare, and increase profitability.
-                    </p>
+                    <h3>{{ config.about_title }}</h3>
+                    <p>{{ config.about_text|linebreaksbr }}</p>
 
-                    <h3>Our Technology</h3>
-                    <p>
-                        Built on advanced machine learning algorithms and real-time data
-                        processing, EasyRanch provides actionable insights that help
-                        ranchers make informed decisions. From early disease detection to
-                        feed optimization, our platform covers every aspect of modern
-                        ranch operations.
-                    </p>
-
+                    {% if metrics %}
                     <h3>Proven Results</h3>
+                    {% for metric in metrics %}
                     <p>
-                        Ranchers using EasyRanch report an average 25% reduction in
-                        veterinary costs, 30% improvement in feed efficiency, and 40%
-                        faster disease detection compared to traditional methods.
+                        Ranchers using EasyRanch report an average {{ metric.value }} {{ metric.title }}.
                     </p>
+                    {% endfor %}
+                    {% else %}
+                    <h3>Our Technology</h3>
+                    <p>Built on advanced machine learning algorithms and real-time data processing, EasyRanch provides actionable insights that help ranchers make informed decisions.</p>
+                    {% endif %}
                 </div>
                 <div class="about-image">
-                    <img src="{% static 'images/About EasyRanch.png' %}" alt="About EasyRanch" />
+                    {% if config.about_image %}
+                        <img src="{{ config.about_image.url }}" alt="About EasyRanch" />
+                    {% else %}
+                        <img src="{% static 'images/About EasyRanch.png' %}" alt="About EasyRanch" />
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -301,37 +200,44 @@
                         <i class="fas fa-map-marker-alt"></i>
                         <div>
                             <h4>Address</h4>
-                            <p>Riff, 45, St George Terrace<br />Perth, WA 6000</p>
+                            <p>{{ config.address|linebreaksbr }}</p>
                         </div>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-phone"></i>
                         <div>
                             <h4>Phone</h4>
-                            <p>+61 493 182 200</p>
+                            <p>{{ config.phone }}</p>
                         </div>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-envelope"></i>
                         <div>
                             <h4>Email</h4>
-                            <p>enquiry@innova8s.com</p>
+                            <p>{{ config.email }}</p>
                         </div>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-clock"></i>
                         <div>
                             <h4>Business Hours</h4>
-                            <p>
-                                Monday - Friday: 8:00 AM - 6:00 PM<br />Saturday: 9:00 AM -
-                                4:00 PM
-                            </p>
+                            <p>{{ config.business_hours|linebreaksbr }}</p>
                         </div>
                     </div>
                 </div>
                 <div class="contact-form">
                     <h3>Request a Demo</h3>
-                    <form>
+                    {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" style="background: rgba(39, 174, 96, 0.2); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <form method="POST">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label for="name">Full Name</label>
                             <input type="text" id="name" name="name" placeholder="Enter your full name" required />
@@ -367,22 +273,30 @@
                     </p>
                 </div>
                 <div class="social-media">
-                    <a href="https://www.instagram.com/_theeasyranch_/" target="_blank" rel="noopener"
+                    {% if config.instagram_url %}
+                    <a href="{{ config.instagram_url }}" target="_blank" rel="noopener"
                         class="social-link" aria-label="Instagram">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://x.com/theeasyranch" target="_blank" rel="noopener" class="social-link"
+                    {% endif %}
+                    {% if config.twitter_url %}
+                    <a href="{{ config.twitter_url }}" target="_blank" rel="noopener" class="social-link"
                         aria-label="X (Twitter)">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a href="https://www.facebook.com/profile.php?id=61584392922841" target="_blank" rel="noopener"
+                    {% endif %}
+                    {% if config.facebook_url %}
+                    <a href="{{ config.facebook_url }}" target="_blank" rel="noopener"
                         class="social-link" aria-label="Facebook">
                         <i class="fab fa-facebook"></i>
                     </a>
-                    <a href="https://www.linkedin.com/in/theeasy-ranch-684a4739b/" target="_blank" rel="noopener"
+                    {% endif %}
+                    {% if config.linkedin_url %}
+                    <a href="{{ config.linkedin_url }}" target="_blank" rel="noopener"
                         class="social-link" aria-label="LinkedIn">
                         <i class="fab fa-linkedin"></i>
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

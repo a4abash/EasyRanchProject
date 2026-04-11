@@ -1,6 +1,33 @@
-from django.shortcuts import render
-
-# Create your views here.
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Service, Benefit, Gallery, Metric, ContactSubmission, SiteSetting
 
 def homepage(request):
-    return render(request, 'homepage.html')
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message_text = request.POST.get('message')
+        
+        if name and email and message_text:
+            ContactSubmission.objects.create(
+                name=name,
+                email=email,
+                message=message_text
+            )
+            messages.success(request, 'Your request for a demo has been sent successfully!')
+            return redirect('homepage')
+
+    # Get Site Settings (create default if missing)
+    site_config, created = SiteSetting.objects.get_or_create(id=1)
+    if created:
+        site_config.about_text = "EasyRanch combines cutting-edge artificial intelligence, IoT sensors, and mobile technology to create the most comprehensive ranch management platform available today."
+        site_config.save()
+
+    context = {
+        'services': Service.objects.all(),
+        'benefits': Benefit.objects.all(),
+        'galleries': Gallery.objects.all(),
+        'metrics': Metric.objects.all(),
+        'config': site_config,
+    }
+    return render(request, 'homepage.html', context)
