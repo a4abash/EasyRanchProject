@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.utils import timezone
 from django.conf import settings
 from thefuzz import fuzz
 import requests
@@ -17,25 +20,37 @@ def homepage(request):
         
         if name and email:
             # Save to Database
-            ContactSubmission.objects.create(
+            submission = ContactSubmission.objects.create(
                 name=name,
                 email=email,
                 message=message_text or ""
             )
             
-            # Send Email Notification
-            subject = f'New Demo Request from {name}'
-            email_message = f'Name: {name}\nEmail: {email}\n\nMessage:\n{message_text}'
+            # Send Professional Email Notification
+            subject = f'🚀 New Demo Request from {name}'
+            admin_url = f"{request.build_absolute_uri('/admin/core/contactsubmission/')}{submission.id}/change/"
+            
+            context = {
+                'name': name,
+                'email': email,
+                'message': message_text or "No specific message provided.",
+                'timestamp': timezone.now(),
+                'admin_url': admin_url,
+            }
+            
+            html_content = render_to_string('emails/demo_notification.html', context)
+            text_content = strip_tags(html_content)
+            
             try:
-                send_mail(
+                email_obj = EmailMultiAlternatives(
                     subject,
-                    email_message,
+                    text_content,
                     settings.DEFAULT_FROM_EMAIL,
                     [settings.NOTIFICATION_EMAIL],
-                    fail_silently=False,
                 )
+                email_obj.attach_alternative(html_content, "text/html")
+                email_obj.send()
             except Exception as e:
-                # Log error or handle silently for now
                 print(f"Error sending email: {e}")
 
             messages.success(request, 'Your request for a demo has been sent successfully!')
