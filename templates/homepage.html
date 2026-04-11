@@ -236,7 +236,7 @@
                         {% endfor %}
                     </div>
                     {% endif %}
-                    <form method="POST">
+                    <form method="POST" id="demoRequestForm">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="name">Full Name</label>
@@ -252,8 +252,19 @@
                             <textarea id="message" name="message" rows="4"
                                 placeholder="Tell us about your ranch and specific needs"></textarea>
                         </div>
-                        <button type="submit" class="cta-button">Request Demo</button>
+                        <button type="submit" class="cta-button" id="submitBtn">Request Demo</button>
                     </form>
+
+                    <script>
+                        // Failsafe: Ensure standard form submission and show loading state
+                        document.getElementById('demoRequestForm').addEventListener('submit', function(e) {
+                            const btn = document.getElementById('submitBtn');
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                            btn.style.opacity = '0.7';
+                            btn.style.pointerEvents = 'none';
+                            // No e.preventDefault() here means it will proceed with standard POST
+                        });
+                    </script>
                 </div>
             </div>
         </div>

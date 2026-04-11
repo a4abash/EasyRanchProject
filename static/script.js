@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Form submission using Google Apps Script
+/* LEGACY: Form submission using Google Apps Script (Disabled to allow Django processing)
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.querySelector("form");
   if (form) {
@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+*/
 
 // ============================================
 // CHATBOT FUNCTIONALITY

@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import Service, Benefit, Gallery, Metric, ContactSubmission, SiteSetting
 
 def homepage(request):
@@ -8,12 +10,29 @@ def homepage(request):
         email = request.POST.get('email')
         message_text = request.POST.get('message')
         
-        if name and email and message_text:
+        if name and email:
+            # Save to Database
             ContactSubmission.objects.create(
                 name=name,
                 email=email,
-                message=message_text
+                message=message_text or ""
             )
+            
+            # Send Email Notification
+            subject = f'New Demo Request from {name}'
+            email_message = f'Name: {name}\nEmail: {email}\n\nMessage:\n{message_text}'
+            try:
+                send_mail(
+                    subject,
+                    email_message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [settings.NOTIFICATION_EMAIL],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                # Log error or handle silently for now
+                print(f"Error sending email: {e}")
+
             messages.success(request, 'Your request for a demo has been sent successfully!')
             return redirect('homepage')
 
