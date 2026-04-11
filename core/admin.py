@@ -1,6 +1,29 @@
 from django.contrib import admin
 
-from .models import Service, Benefit, Gallery, Metric, ContactSubmission, SiteSetting
+from .models import Service, Benefit, Gallery, Metric, ContactSubmission, SiteSetting, KnowledgeItem, ChatSession, ChatMessage
+
+# ... (previous registrations)
+
+@admin.register(KnowledgeItem)
+class KnowledgeItemAdmin(admin.ModelAdmin):
+    list_display = ('label', 'answer_preview')
+    search_fields = ('label', 'answer', 'keywords')
+
+    def answer_preview(self, obj):
+        return obj.answer[:50] + "..."
+
+class ChatMessageInline(admin.TabularInline):
+    model = ChatMessage
+    extra = 0
+    readonly_fields = ('role', 'content', 'timestamp')
+
+@admin.register(ChatSession)
+class ChatSessionAdmin(admin.ModelAdmin):
+    list_display = ('session_id', 'created_at', 'message_count')
+    inlines = [ChatMessageInline]
+
+    def message_count(self, obj):
+        return obj.messages.count()
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):

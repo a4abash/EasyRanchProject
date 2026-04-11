@@ -83,6 +83,38 @@ class SiteSetting(models.Model):
     def __str__(self):
         return "Site Configuration"
 
+class KnowledgeItem(models.Model):
+    label = models.CharField(max_length=100)
+    questions = models.JSONField(help_text="List of sample questions for this item")
+    answer = models.TextField()
+    keywords = models.TextField(help_text="Comma-separated keywords for retrieval", blank=True)
+
+    def __str__(self):
+        return f"[{self.label}] {self.answer[:50]}..."
+
     class Meta:
-        verbose_name = "Site Setting"
-        verbose_name_plural = "Site Settings"
+        verbose_name = "Knowledge Item"
+        verbose_name_plural = "Knowledge Items"
+
+class ChatSession(models.Model):
+    session_id = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Session {self.session_id}"
+
+class ChatMessage(models.Model):
+    ROLE_CHOICES = [
+        ('user', 'User'),
+        ('bot', 'Bot'),
+    ]
+    session = models.ForeignKey(ChatSession, on_delete=models.CASCADE, related_name='messages')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"{self.role}: {self.content[:30]}..."

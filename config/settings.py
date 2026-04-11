@@ -125,7 +125,18 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Gemini API Settings
+GEMINI_API_KEY = "AIzaSyDe953ba4ewsRCs7Nlv_fKmJjOALhENBOs"  # Moving from frontend to backend
+GEMINI_MODEL = "gemini-1.5-flash"
+GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
+
+# Email Settings (Mailtrap)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = '386f72b208f54b'
+EMAIL_HOST_PASSWORD = '7a11e0b5bdbac1'
+EMAIL_PORT = '2525'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = 'noreply@easyranch.com'
 NOTIFICATION_EMAIL = 'enquiry@innova8s.com'

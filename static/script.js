@@ -120,9 +120,85 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 */
 
+// // ============================================
+// CHATBOT FUNCTIONALITY (BACKEND POWERED RAG)
 // ============================================
-// CHATBOT FUNCTIONALITY
-// ============================================
+
+document.addEventListener("DOMContentLoaded", function () {
+  const chatMessages = document.getElementById("chatMessages");
+  const chatInput = document.getElementById("chatInput");
+  const sendButton = document.getElementById("sendChat");
+
+  // Get or Generate Session ID
+  let sessionId = localStorage.getItem("chat_session_id");
+  if (!sessionId) {
+    sessionId = "sess_" + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem("chat_session_id", sessionId);
+  }
+
+  function addMessage(role, text) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${role}-message`;
+    messageDiv.innerHTML = `<div class="message-content">${text}</div>`;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    addMessage("user", text);
+    chatInput.value = "";
+
+    // Show typing indicator
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "message bot-message";
+    typingDiv.innerHTML = `<div class="message-content"><i class="fas fa-ellipsis-h fa-beat"></i></div>`;
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+      const response = await fetch("/chat/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCSRFToken(),
+        },
+        body: JSON.stringify({
+          message: text,
+          session_id: sessionId,
+        }),
+      });
+
+      const data = await response.json();
+      chatMessages.removeChild(typingDiv);
+
+      if (data.response) {
+        addMessage("bot", data.response);
+      } else {
+        addMessage("bot", "I am having some trouble thinking right now. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Chat Error:", error);
+      chatMessages.removeChild(typingDiv);
+      addMessage("bot", "Network error. Please check your connection.");
+    }
+  }
+
+  function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+  }
+
+  if (sendButton) {
+    sendButton.addEventListener("click", sendMessage);
+    chatInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+  }
+});
 
 // API Keys
 const WEATHER_API_KEY = "d04cb1b27eeb0b5fd7319c4440863b45";
