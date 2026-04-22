@@ -1,0 +1,22 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f8f9fa; padding: 20px;">
+    <div style="max-width: 500px; width: 100%; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 60px; margin-bottom: 20px; color: #2c5530;">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1 style="color: #2c3e50; margin-bottom: 10px;">Unsubscribed Successfully</h1>
+        <p style="color: #666; line-height: 1.6; margin-bottom: 30px;">
+            The email address <strong>{{ email }}</strong> has been removed from our newsletter list. You will no longer receive updates from EasyRanch.
+        </p>
+        <p style="color: #666; margin-bottom: 30px;">
+            Changed your mind? You can always resubscribe on our homepage.
+        </p>
+        <a href="{% url 'homepage' %}" style="display: inline-block; padding: 12px 30px; background: #2c5530; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; transition: 0.3s;" onmouseover="this.style.background='#1a331c'" onmouseout="this.style.background='#2c5530'">
+            Return to Homepage
+        </a>
+    </div>
+</div>
+{% endblock %}

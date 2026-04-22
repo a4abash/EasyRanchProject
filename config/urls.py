@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.homepage, name='homepage'),
     path('chat/', views.chat, name='chat'),
+    path('subscribe-newsletter/', views.subscribe_newsletter, name='subscribe_newsletter'),
+    path('unsubscribe/', views.unsubscribe_newsletter, name='unsubscribe_newsletter'),
 ]
 
 if settings.DEBUG:

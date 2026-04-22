@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-l2g_3&-456=jp5e0_b^8tppy*8l_1)2v6p3)n$m&#bdw&wx#mq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -132,11 +132,12 @@ GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMI
 
 # Email Settings (Mailtrap)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = '386f72b208f54b'
-EMAIL_HOST_PASSWORD = '7a11e0b5bdbac1'
-EMAIL_PORT = '2525'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = 'noreply@easyranch.com'
 NOTIFICATION_EMAIL = 'enquiry@innova8s.com'
+
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = '386f72b208f54b'
+EMAIL_HOST_PASSWORD = '7a11e0b5bdbac1'
+EMAIL_PORT = '2525'

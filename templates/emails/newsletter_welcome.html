@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to EasyRanch Newsletter</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f7f6; }
+        .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #2c5530 0%, #1a331c 100%); color: #ffffff; padding: 30px 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; }
+        .content { padding: 30px 20px; text-align: center; }
+        .welcome-icon { font-size: 48px; margin-bottom: 20px; }
+        .footer { background-color: #f4f7f6; color: #777; padding: 20px; text-align: center; font-size: 12px; border-top: 1px solid #eeeeee; }
+        .btn { display: inline-block; padding: 12px 25px; background-color: #ff6b35; color: #ffffff !important; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; transition: background 0.3s; }
+        .btn:hover { background-color: #e55a2b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>EasyRanch</h1>
+            <p>Welcome to our Community!</p>
+        </div>
+        <div class="content">
+            <div class="welcome-icon">🌱</div>
+            <h2>You're officially on the list!</h2>
+            <p>Hello,</p>
+            <p>Thank you for subscribing to the EasyRanch newsletter. We're excited to have you with us!</p>
+            <p>You'll now be the first to receive updates on our AI platform, smart ranching tips, and industry insights designed to help your operations thrive.</p>
+            
+            <div style="margin: 30px 0; border-top: 1px solid #eeeeee; border-bottom: 1px solid #eeeeee; padding: 20px;">
+                <p style="font-style: italic; color: #555;">"Empowering modern ranchers with intelligent technology."</p>
+            </div>
+
+            <p>In the meantime, feel free to explore our solutions or reach out if you have any questions.</p>
+
+            <a href="{{ site_url }}" class="btn">Explore EasyRanch</a>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 EasyRanch. All rights reserved.</p>
+            <p>You are receiving this email because you subscribed to our newsletter at easyranch.ai</p>
+            <p>If you'd like to unsubscribe, <a href="{{ unsubscribe_url }}" style="color: #2c5530; text-decoration: underline;">click here</a> or contact us at {{ support_email }}</p>
+        </div>
+    </div>
+</body>
+</html>

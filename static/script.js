@@ -307,6 +307,77 @@ function initializeChatbot() {
   }
 }
 
+// Newsletter Functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const newsletterForm = document.getElementById("newsletterForm");
+  const newsletterMessage = document.getElementById("newsletterMessage");
+  const newsletterBtn = document.getElementById("newsletterBtn");
+
+  if (newsletterForm) {
+    newsletterForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const emailInput = document.getElementById("newsletterEmail");
+      const email = emailInput.value.trim();
+
+      if (!email) return;
+
+      // Show loading state
+      const originalBtnContent = newsletterBtn.innerHTML;
+      newsletterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subscribing...';
+      newsletterBtn.style.pointerEvents = "none";
+      newsletterBtn.style.opacity = "0.8";
+
+      try {
+        const response = await fetch("/subscribe-newsletter/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken(),
+          },
+          body: JSON.stringify({ email: email }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Success
+          newsletterMessage.textContent = data.message;
+          newsletterMessage.className = "newsletter-message success";
+          emailInput.value = "";
+          
+          // Confetti or visual feedback could be added here
+          setTimeout(() => {
+            newsletterMessage.style.opacity = "0";
+            setTimeout(() => {
+              newsletterMessage.textContent = "";
+              newsletterMessage.style.opacity = "1";
+            }, 500);
+          }, 5000);
+        } else {
+          // Error
+          newsletterMessage.textContent = data.error || data.message || "An error occurred. Please try again.";
+          newsletterMessage.className = "newsletter-message error";
+        }
+      } catch (error) {
+        console.error("Newsletter Error:", error);
+        newsletterMessage.textContent = "Network error. Please check your connection.";
+        newsletterMessage.className = "newsletter-message error";
+      } finally {
+        // Reset button state
+        newsletterBtn.innerHTML = originalBtnContent;
+        newsletterBtn.style.pointerEvents = "auto";
+        newsletterBtn.style.opacity = "1";
+      }
+    });
+  }
+
+  function getCSRFToken() {
+    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    return csrfInput ? csrfInput.value : "";
+  }
+});
+
 function showWelcomeMessage() {
   const welcomeMessage = `
         <div style="font-size:1.05em; line-height:1.4;">

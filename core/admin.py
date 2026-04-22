@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Service, Benefit, Gallery, Metric, ContactSubmission, SiteSetting, KnowledgeItem, ChatSession, ChatMessage
+from .models import Service, Benefit, Gallery, Metric, ContactSubmission, SiteSetting, KnowledgeItem, ChatSession, ChatMessage, NewsletterSubscriber
 
 # ... (previous registrations)
 
@@ -57,3 +57,8 @@ class SiteSettingAdmin(admin.ModelAdmin):
         if self.model.objects.exists():
             return False
         return True
+@admin.register(NewsletterSubscriber)
+class NewsletterSubscriberAdmin(admin.ModelAdmin):
+    list_display = ('email', 'created_at', 'is_active')
+    search_fields = ('email',)
+    list_filter = ('is_active', 'created_at')

@@ -10,7 +10,7 @@ import requests
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .models import Service, Benefit, Gallery, Metric, ContactSubmission, SiteSetting, KnowledgeItem, ChatSession, ChatMessage
+from .models import Service, Benefit, Gallery, Metric, ContactSubmission, SiteSetting, KnowledgeItem, ChatSession, ChatMessage, NewsletterSubscriber
 
 def homepage(request):
     if request.method == 'POST':
@@ -163,3 +163,146 @@ def chat(request):
     except Exception as e:
         print(f"Chat Error: {e}")
         return JsonResponse({'error': 'Server error processing chat'}, status=500)
+
+@csrf_exempt
+def subscribe_newsletter(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '').strip().lower()
+        
+        if not email:
+            return JsonResponse({'error': 'Email is required'}, status=400)
+            
+        # Basic email validation check
+        from django.core.validators import validate_email
+        from django.core.exceptions import ValidationError
+        try:
+            validate_email(email)
+        except ValidationError:
+            return JsonResponse({'error': 'Invalid email format'}, status=400)
+            
+        # Check if already exists
+        subscriber, created = NewsletterSubscriber.objects.get_or_create(email=email)
+        
+        if not created and subscriber.is_active:
+            return JsonResponse({'message': 'You are already subscribed!'}, status=200)
+            
+        # Reactivate if needed
+        if not created and not subscriber.is_active:
+            subscriber.is_active = True
+            subscriber.save()
+
+        # Send Emails
+        try:
+            from django.core.mail import EmailMultiAlternatives
+            from django.template.loader import render_to_string
+            from django.utils.html import strip_tags
+            from django.utils import timezone
+            from django.conf import settings
+            
+            # Context for templates
+            admin_url = f"{request.build_absolute_uri('/admin/core/newslettersubscriber/')}{subscriber.id}/change/"
+            unsubscribe_url = f"{request.build_absolute_uri('/unsubscribe/')}?email={email}"
+            context = {
+                'email': email,
+                'timestamp': timezone.now(),
+                'site_url': request.build_absolute_uri('/'),
+                'admin_url': admin_url,
+                'unsubscribe_url': unsubscribe_url,
+                'support_email': settings.NOTIFICATION_EMAIL,
+            }
+            
+            # 1. Send Welcome Email to Subscriber
+            subscriber_subject = "Welcome to the EasyRanch Newsletter! 🌱"
+            subscriber_html = render_to_string('emails/newsletter_welcome.html', context)
+            subscriber_text = strip_tags(subscriber_html)
+            
+            sub_email = EmailMultiAlternatives(
+                subscriber_subject,
+                subscriber_text,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+            )
+            sub_email.attach_alternative(subscriber_html, "text/html")
+            sub_email.send()
+            
+            # 2. Send Notification Email to Admin
+            admin_subject = f"🚀 New Newsletter Subscriber: {email}"
+            admin_html = render_to_string('emails/newsletter_admin_notification.html', context)
+            admin_text = strip_tags(admin_html)
+            
+            adm_email = EmailMultiAlternatives(
+                admin_subject,
+                admin_text,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.NOTIFICATION_EMAIL],
+            )
+            adm_email.attach_alternative(admin_html, "text/html")
+            adm_email.send()
+            
+        except Exception as email_err:
+            print(f"Error sending newsletter emails: {email_err}")
+            # We don't fail the request if email sending fails, but we log it
+        
+        message = 'Thank you for subscribing to our newsletter!'
+        if not created:
+            message = 'Welcome back! Your subscription has been reactivated.'
+            
+        return JsonResponse({'message': message}, status=201 if created else 200)
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        print(f"Newsletter Error: {e}")
+        return JsonResponse({'error': 'Server error processing subscription'}, status=500)
+
+def unsubscribe_newsletter(request):
+    email = request.GET.get('email', '').strip().lower()
+    if email:
+        try:
+            subscriber = NewsletterSubscriber.objects.get(email=email)
+            if subscriber.is_active:
+                subscriber.is_active = False
+                subscriber.save()
+
+                # Send Emails
+                try:
+                    from django.core.mail import EmailMultiAlternatives
+                    from django.template.loader import render_to_string
+                    from django.utils.html import strip_tags
+                    from django.utils import timezone
+                    from django.conf import settings
+                    
+                    context = {
+                        'email': email,
+                        'timestamp': timezone.now(),
+                        'site_url': request.build_absolute_uri('/'),
+                    }
+                    
+                    # 1. Send Confirmation Email to User
+                    user_subject = "You've been unsubscribed from EasyRanch Newsletter"
+                    user_html = render_to_string('emails/newsletter_unsubscribed_user.html', context)
+                    user_text = strip_tags(user_html)
+                    
+                    user_msg = EmailMultiAlternatives(user_subject, user_text, settings.DEFAULT_FROM_EMAIL, [email])
+                    user_msg.attach_alternative(user_html, "text/html")
+                    user_msg.send()
+                    
+                    # 2. Send Notification Email to Admin
+                    admin_subject = f"🔴 Unsubscribed: {email}"
+                    admin_html = render_to_string('emails/newsletter_unsubscribed_admin.html', context)
+                    admin_text = strip_tags(admin_html)
+                    
+                    admin_msg = EmailMultiAlternatives(admin_subject, admin_text, settings.DEFAULT_FROM_EMAIL, [settings.NOTIFICATION_EMAIL])
+                    admin_msg.attach_alternative(admin_html, "text/html")
+                    admin_msg.send()
+                    
+                except Exception as email_err:
+                    print(f"Error sending unsubscription emails: {email_err}")
+                    
+        except NewsletterSubscriber.DoesNotExist:
+            pass
+    return render(request, 'unsubscribe_success.html', {'email': email})

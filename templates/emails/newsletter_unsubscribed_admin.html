@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Unsubscribed from Newsletter</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f7f6; }
+        .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { background: #343a40; color: #ffffff; padding: 30px 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; }
+        .content { padding: 30px 20px; }
+        .info-box { background-color: #f8f9fa; border-left: 4px solid #e74c3c; padding: 15px; margin-bottom: 25px; }
+        .info-box p { margin: 5px 0; font-size: 14px; }
+        .footer { background-color: #f4f7f6; color: #777; padding: 20px; text-align: center; font-size: 12px; border-top: 1px solid #eeeeee; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>EasyRanch</h1>
+            <p>Newsletter Unsubscription Alert</p>
+        </div>
+        <div class="content">
+            <p>Hello Admin,</p>
+            <p>A user has unsubscribed from the EasyRanch newsletter. Here are the details:</p>
+            
+            <div class="info-box">
+                <p><strong>Email:</strong> {{ email }}</p>
+                <p><strong>Unsubscribed On:</strong> {{ timestamp|date:"F j, Y, g:i a" }}</p>
+            </div>
+
+            <p>Their record status has been updated to <code>is_active = False</code> in the system.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 EasyRanch. All rights reserved.</p>
+            <p>Automated unsubscription reporting system.</p>
+        </div>
+    </div>
+</body>
+</html>
