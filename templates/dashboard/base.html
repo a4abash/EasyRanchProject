@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard | EasyRanch Admin{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard.css' %}">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="db-sidebar">
+        <div class="db-logo">
+            <h2>Easy<span>Ranch</span></h2>
+        </div>
+        <nav class="db-nav">
+            <a href="{% url 'dashboard_home' %}" class="db-nav-item {% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
+                <i class="fas fa-th-large"></i> Overview
+            </a>
+            <a href="{% url 'dashboard_subscribers' %}" class="db-nav-item {% if request.resolver_match.url_name == 'dashboard_subscribers' %}active{% endif %}">
+                <i class="fas fa-envelope"></i> Subscribers
+            </a>
+            <a href="{% url 'dashboard_leads' %}" class="db-nav-item {% if request.resolver_match.url_name == 'dashboard_leads' %}active{% endif %}">
+                <i class="fas fa-user-tie"></i> Leads/Contact
+            </a>
+            <a href="{% url 'dashboard_knowledge' %}" class="db-nav-item {% if 'knowledge' in request.path %}active{% endif %}">
+                <i class="fas fa-brain"></i> AI Knowledge
+            </a>
+            <a href="{% url 'dashboard_services' %}" class="db-nav-item {% if 'services' in request.path %}active{% endif %}">
+                <i class="fas fa-concierge-bell"></i> Services
+            </a>
+            <a href="{% url 'dashboard_benefits' %}" class="db-nav-item {% if 'benefits' in request.path %}active{% endif %}">
+                <i class="fas fa-star"></i> Benefits
+            </a>
+            <a href="{% url 'dashboard_metrics' %}" class="db-nav-item {% if 'metrics' in request.path %}active{% endif %}">
+                <i class="fas fa-chart-line"></i> Metrics
+            </a>
+            <a href="{% url 'dashboard_gallery' %}" class="db-nav-item {% if 'gallery' in request.path %}active{% endif %}">
+                <i class="fas fa-images"></i> Gallery
+            </a>
+            <a href="{% url 'dashboard_settings' %}" class="db-nav-item {% if 'settings' in request.path %}active{% endif %}">
+                <i class="fas fa-sliders-h"></i> Site Settings
+            </a>
+            <a href="{% url 'homepage' %}" class="db-nav-item" target="_blank">
+                <i class="fas fa-eye"></i> View Site
+            </a>
+            <a href="{% url 'admin:index' %}" class="db-nav-item">
+                <i class="fas fa-cog"></i> Django Admin
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="db-main">
+        <header class="db-header">
+            <div class="db-welcome">
+                <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+            </div>
+            <div class="db-user-nav">
+                <span class="user-info">Logged as <strong>{{ user.username }}</strong></span>
+                <a href="{% url 'admin:logout' %}?next={% url 'homepage' %}" class="db-btn db-btn-primary">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </header>
+
+        {% if messages %}
+        <div class="db-toast-stack" id="dbToastStack">
+            {% for message in messages %}
+            <div class="db-toast db-toast-{{ message.tags|default:'info' }}" role="status" aria-live="polite">
+                <div class="db-toast-content">
+                    <span class="db-toast-icon">
+                        {% if 'success' in message.tags %}
+                        <i class="fas fa-check-circle"></i>
+                        {% elif 'error' in message.tags %}
+                        <i class="fas fa-times-circle"></i>
+                        {% elif 'warning' in message.tags %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% else %}
+                        <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                    </span>
+                    <span class="db-toast-text">{{ message }}</span>
+                </div>
+                <button class="db-toast-close" type="button" aria-label="Close notification">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        (function () {
+            const stack = document.getElementById('dbToastStack');
+            if (!stack) return;
+
+            const removeToast = (toast) => {
+                toast.classList.add('is-hiding');
+                window.setTimeout(() => toast.remove(), 220);
+            };
+
+            const toasts = stack.querySelectorAll('.db-toast');
+            toasts.forEach((toast) => {
+                const closeBtn = toast.querySelector('.db-toast-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => removeToast(toast));
+                }
+                window.setTimeout(() => removeToast(toast), 4500);
+            });
+        })();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

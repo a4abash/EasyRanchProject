@@ -1,0 +1,90 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Subscribers | EasyRanch Dashboard{% endblock %}
+
+{% block page_title %}Newsletter Audience{% endblock %}
+
+{% block content %}
+<div class="db-card">
+    <div class="db-section-head">
+        <div>
+            <h3 class="db-section-title">Active Subscribers</h3>
+            <p class="db-section-subtitle">Manage your email newsletter audience.</p>
+        </div>
+        <div class="db-section-actions">
+            <span class="badge badge-info">Total: {{ page_obj.paginator.count }}</span>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="db-table">
+            <thead>
+                <tr>
+                    <th>Subscriber</th>
+                    <th>Joined Date</th>
+                    <th>Status</th>
+                    <th class="db-text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in items %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="background: var(--db-primary); color: white; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem;">
+                                {{ sub.email.0|upper }}
+                            </div>
+                            <span style="font-weight: 600;">{{ sub.email }}</span>
+                        </div>
+                    </td>
+                    <td><span style="color: var(--db-text-muted);">{{ sub.created_at|date:"M d, Y" }}</span> <small style="display: block; font-size: 0.7rem; color: #bdc3c7;">{{ sub.created_at|time:"H:i" }}</small></td>
+                    <td>
+                        {% if sub.is_active %}
+                        <span class="badge badge-success">Active</span>
+                        {% else %}
+                        <span class="badge badge-danger">Unsubscribed</span>
+                        {% endif %}
+                    </td>
+                    <td class="db-text-right">
+                        <div class="db-action-group">
+                            <form action="{% url 'dashboard_subscriber_toggle' sub.id %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="db-btn db-btn-icon db-btn-neutral" title="Toggle Status">
+                                    <i class="fas fa-power-off"></i>
+                                </button>
+                            </form>
+                            <form action="{% url 'dashboard_subscriber_delete' sub.id %}" method="post" style="display: inline;" onsubmit="return confirm('Delete this subscriber permanently?');">
+                                {% csrf_token %}
+                                <button type="submit" class="db-btn db-btn-icon db-btn-danger-soft" title="Delete Permanently">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="db-empty-state">
+                        <div style="opacity: 0.3; margin-bottom: 1rem;">
+                            <i class="fas fa-users-slash fa-4x"></i>
+                        </div>
+                        No subscribers found in the database.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% if is_paginated %}
+<div class="db-pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="db-btn">Previous</a>
+    {% endif %}
+    <span class="badge badge-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="db-btn">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

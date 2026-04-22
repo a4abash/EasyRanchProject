@@ -49,13 +49,19 @@ class Metric(models.Model):
         return f"{self.value} {self.title}"
 
 class ContactSubmission(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('REPLIED', 'Replied'),
+    ]
     name = models.CharField(max_length=100)
     email = models.EmailField()
+    subject = models.CharField(max_length=200, blank=True, null=True)
     message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} - {self.email}"
+        return f"{self.name} - {self.email} ({self.status})"
 
 class SiteSetting(models.Model):
     # Hero Section

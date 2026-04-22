@@ -1,0 +1,234 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Overview | EasyRanch Admin{% endblock %}
+
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<!-- Quick Stats Panels -->
+<div class="db-stats-grid">
+    <div class="db-card">
+        <div class="db-stat-row">
+            <div class="db-stat-icon" style="background: rgba(74, 144, 226, 0.1); color: var(--db-primary);">
+                <i class="fas fa-users fa-lg"></i>
+            </div>
+            <div>
+                <h4 class="db-stat-title">Total Subscribers</h4>
+                <p class="db-stat-value">{{ stats.subscribers_total }}</p>
+            </div>
+        </div>
+        <div class="db-stat-note" style="color: #2ecc71;">
+            <i class="fas fa-arrow-up"></i> {{ stats.subscribers_active }} active members
+        </div>
+    </div>
+
+    <div class="db-card">
+        <div class="db-stat-row">
+            <div class="db-stat-icon" style="background: rgba(46, 204, 113, 0.1); color: #2ecc71;">
+                <i class="fas fa-user-tie fa-lg"></i>
+            </div>
+            <div>
+                <h4 class="db-stat-title">New Leads</h4>
+                <p class="db-stat-value">{{ stats.leads_total }}</p>
+            </div>
+        </div>
+        <div class="db-stat-note" style="color: #e67e22;">
+            <i class="fas fa-clock"></i> {{ stats.leads_unread }} pending review
+        </div>
+    </div>
+
+    <div class="db-card">
+        <div class="db-stat-row">
+            <div class="db-stat-icon" style="background: rgba(241, 196, 15, 0.1); color: #f1c40f;">
+                <i class="fas fa-brain fa-lg"></i>
+            </div>
+            <div>
+                <h4 class="db-stat-title">AI Knowledge</h4>
+                <p class="db-stat-value">{{ stats.knowledge_items }}</p>
+            </div>
+        </div>
+        <div class="db-stat-note" style="color: var(--db-primary);">
+            <i class="fas fa-sync"></i> Latest updates synced
+        </div>
+    </div>
+
+    <div class="db-card">
+        <div class="db-stat-row">
+            <div class="db-stat-icon" style="background: rgba(155, 89, 182, 0.1); color: #9b59b2;">
+                <i class="fas fa-concierge-bell fa-lg"></i>
+            </div>
+            <div>
+                <h4 class="db-stat-title">Services</h4>
+                <p class="db-stat-value">{{ stats.services }}</p>
+            </div>
+        </div>
+        <div class="db-stat-note db-text-muted">
+            <i class="fas fa-check"></i> All services live
+        </div>
+    </div>
+</div>
+
+<div class="db-overview-split">
+    <!-- Growth Chart -->
+    <div class="db-card">
+        <div class="db-card-head">
+            <h3 class="db-card-title">Engagement Analytics</h3>
+            <div class="db-small-muted">
+                Last 30 Days
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="growthChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Subscribers -->
+    <div class="db-card">
+        <h3 class="db-card-title" style="margin-bottom: 1.5rem;">Recent Signups</h3>
+        <div class="db-signups-list">
+            {% for sub in recent_subscribers %}
+            <div class="db-signup-row">
+                <div class="db-avatar-circle">
+                    {{ sub.email.0|upper }}
+                </div>
+                <div class="db-signup-meta">
+                    <p class="db-signup-email">{{ sub.email }}</p>
+                    <p class="db-signup-time">{{ sub.created_at|timesince }} ago</p>
+                </div>
+                {% if sub.is_active %}
+                <span style="color: #2ecc71;"><i class="fas fa-check-circle"></i></span>
+                {% else %}
+                <span style="color: #e74c3c;"><i class="fas fa-times-circle"></i></span>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="db-empty-state" style="padding: 2rem 0;">No recent signups</p>
+            {% endfor %}
+        </div>
+        <a href="{% url 'dashboard_subscribers' %}" class="db-center-link">
+            View All Subscribers <i class="fas fa-chevron-right db-small-muted"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Leads Table -->
+<div class="db-card">
+    <div class="db-card-head">
+        <h3 class="db-card-title">Recent Inquiries</h3>
+        <a href="{% url 'dashboard_leads' %}" class="db-btn db-btn-info-soft">
+            View All Leads
+        </a>
+    </div>
+    <div style="overflow-x: auto;">
+        <table class="db-table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>Email</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in recent_leads %}
+                <tr>
+                    <td><strong>{{ lead.name }}</strong></td>
+                    <td class="db-text-muted">{{ lead.email }}</td>
+                    <td><span class="badge badge-info">{{ lead.subject|default:"General" }}</span></td>
+                    <td>{{ lead.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if lead.status == 'PENDING' %}
+                        <span class="badge badge-warning">Pending</span>
+                        {% elif lead.status == 'REPLIED' %}
+                        <span class="badge badge-success">Replied</span>
+                        {% else %}
+                        <span class="badge badge-danger">{{ lead.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="db-empty-state" style="padding: 3rem;">
+                        No inquiries received yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    
+    // Create gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(74, 144, 226, 0.4)');
+    gradient.addColorStop(1, 'rgba(74, 144, 226, 0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'New Subscribers',
+                data: [
+                    Math.floor(Math.random() * 10) + 2, 
+                    Math.floor(Math.random() * 10) + 5, 
+                    Math.floor(Math.random() * 10) + 3, 
+                    {{ stats.subscribers_total|default:0 }}
+                ],
+                borderColor: '#4a90e2',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#4a90e2',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false,
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

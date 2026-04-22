@@ -1,0 +1,37 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Site Settings | EasyRanch Dashboard{% endblock %}
+{% block page_title %}Site Settings{% endblock %}
+
+{% block content %}
+<div class="db-card db-form-card" style="max-width:1000px;">
+    <div class="db-form-header">
+        <h3>Site Settings</h3>
+        <p>Control hero, about, contact, and social content used across the website.</p>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="db-form" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="form-group">
+            {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="db-form-grid two-col">
+            {% for field in form %}
+            <div class="form-group" style="{% if field.name == 'hero_subtitle' or field.name == 'about_text' or field.name == 'business_hours' %}grid-column:1 / -1;{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}
+                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="db-form-actions">
+            <a href="{% url 'dashboard_home' %}" class="db-btn">Cancel</a>
+            <button type="submit" class="db-btn db-btn-primary">Save Settings</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

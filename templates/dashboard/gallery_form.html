@@ -1,0 +1,37 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}{{ title }} | EasyRanch Dashboard{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="db-card db-form-card">
+    <div class="db-form-header">
+        <h3>{{ title }}</h3>
+        <p>Upload and organize gallery content for the website.</p>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="db-form" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="form-group">
+            {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="db-form-grid">
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}
+            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        </div>
+        <div class="db-form-actions">
+            <a href="{% url 'dashboard_gallery' %}" class="db-btn">Cancel</a>
+            <button type="submit" class="db-btn db-btn-primary">Save Gallery Item</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}AI Knowledge Base | EasyRanch Dashboard{% endblock %}
+
+{% block page_title %}Knowledge Resources{% endblock %}
+
+{% block content %}
+<div class="db-card">
+    <div class="db-section-head">
+        <div>
+            <h3 class="db-section-title">Chatbot Intelligence</h3>
+            <p class="db-section-subtitle">Control what the AI knows about EasyRanch.</p>
+        </div>
+        <div class="db-section-actions">
+            <a href="{% url 'dashboard_knowledge_add' %}" class="db-btn db-btn-primary">
+                <i class="fas fa-plus"></i> Add New Resource
+            </a>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="db-table">
+            <thead>
+                <tr>
+                    <th>Topic / Question</th>
+                    <th>Content Snippet</th>
+                    <th>Status</th>
+                    <th class="db-text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 700; color: var(--db-secondary); margin-bottom: 0.2rem;">{{ item.label }}</div>
+                        {% if item.keywords %}
+                        <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                            <span style="font-size: 0.65rem; background: rgba(74, 144, 226, 0.1); color: var(--db-primary); padding: 0.1rem 0.4rem; border-radius: 4px;">{{ item.keywords }}</span>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="max-width: 300px;">
+                        <p style="margin: 0; font-size: 0.85rem; color: var(--db-text-muted); line-height: 1.4;">
+                            {{ item.answer|truncatechars:80 }}
+                        </p>
+                    </td>
+                    <td>
+                        <span class="badge badge-success">Live</span>
+                    </td>
+                    <td class="db-text-right">
+                        <div class="db-action-group">
+                            <a href="{% url 'dashboard_knowledge_edit' item.id %}" class="db-btn db-btn-icon db-btn-neutral" title="Edit Content">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{% url 'dashboard_knowledge_delete' item.id %}" method="post" style="display: inline;" onsubmit="return confirm('Archive this knowledge item?');">
+                                {% csrf_token %}
+                                <button type="submit" class="db-btn db-btn-icon db-btn-danger-soft" title="Delete Permanently">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="db-empty-state">
+                        <div style="opacity: 0.2; margin-bottom: 1rem;">
+                            <i class="fas fa-book-open fa-4x"></i>
+                        </div>
+                        No knowledge resources uploaded yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% if is_paginated %}
+<div class="db-pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="db-btn">Previous</a>
+    {% endif %}
+    <span class="badge badge-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="db-btn">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

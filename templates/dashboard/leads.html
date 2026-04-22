@@ -1,0 +1,105 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Leads & Inquiries | EasyRanch Dashboard{% endblock %}
+
+{% block page_title %}Contact Leads{% endblock %}
+
+{% block content %}
+<div class="db-card">
+    <div class="db-section-head">
+        <div>
+            <h3 class="db-section-title">Customer Inquiries</h3>
+            <p class="db-section-subtitle">Messages from the website contact form.</p>
+        </div>
+        <div class="db-section-actions">
+            <span class="badge badge-info">Unread: {{ stats.leads_unread }}</span>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="db-table">
+            <thead>
+                <tr>
+                    <th>Lead Details</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th class="db-text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in items %}
+                <tr {% if lead.status == 'PENDING' %}style="background: rgba(74, 144, 226, 0.02);"{% endif %}>
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                            <span style="font-weight: 700; color: var(--db-secondary);">{{ lead.name }}</span>
+                            <span style="font-size: 0.8rem; color: var(--db-text-muted);"><i class="far fa-envelope"></i> {{ lead.email }}</span>
+                            {% if lead.phone %}
+                            <span style="font-size: 0.8rem; color: var(--db-text-muted);"><i class="fas fa-phone-alt"></i> {{ lead.phone }}</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td><span class="badge badge-info">{{ lead.subject|default:"General" }}</span></td>
+                    <td>
+                        <div style="max-width: 300px; font-size: 0.85rem; line-height: 1.4; color: var(--db-text);" title="{{ lead.message }}">
+                            {{ lead.message|truncatewords:15 }}
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-size: 0.85rem; color: var(--db-text-muted);">{{ lead.created_at|date:"M d, Y" }}</span>
+                    </td>
+                    <td>
+                        {% if lead.status == 'PENDING' %}
+                        <span class="badge badge-warning">Pending</span>
+                        {% elif lead.status == 'REPLIED' %}
+                        <span class="badge badge-success">Handled</span>
+                        {% else %}
+                        <span class="badge badge-danger">{{ lead.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="db-text-right">
+                        <div class="db-action-group">
+                            {% if lead.status == 'PENDING' %}
+                            <form action="{% url 'dashboard_lead_mark_replied' lead.id %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="db-btn db-btn-icon db-btn-success-soft" title="Mark as Replied">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                            <form action="{% url 'dashboard_lead_delete' lead.id %}" method="post" style="display: inline;" onsubmit="return confirm('Delete this lead?');">
+                                {% csrf_token %}
+                                <button type="submit" class="db-btn db-btn-icon db-btn-danger-soft" title="Delete Inquiry">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="db-empty-state">
+                        <div style="opacity: 0.2; margin-bottom: 1rem;">
+                            <i class="fas fa-inbox fa-4x"></i>
+                        </div>
+                        Your inbox is empty. No leads yet!
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% if is_paginated %}
+<div class="db-pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="db-btn">Previous</a>
+    {% endif %}
+    <span class="badge badge-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="db-btn">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
