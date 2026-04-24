@@ -5,6 +5,12 @@ from django.views.generic import CreateView, DeleteView, ListView, TemplateView,
 from django.urls import reverse_lazy
 from core.models import Benefit, ContactSubmission, Gallery, KnowledgeItem, Metric, NewsletterSubscriber, Service, SiteSetting
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+class DashboardHome(LoginRequiredMixin, TemplateView):
+    login_url = '/portal/'
+    template_name = 'dashboard/home.html'
 
 
 class StaffRequiredMixin:

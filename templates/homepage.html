@@ -145,6 +145,30 @@
         </div>
     </section>
 
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content fade-in">
+                <div class="newsletter-text">
+                    <h2>Stay Updated</h2>
+                    <p>Subscribe to our newsletter for the latest ranching insights, AI updates, and platform news.</p>
+                </div>
+                <div class="newsletter-form-container">
+                    <form id="newsletterForm" class="newsletter-form">
+                        <div class="newsletter-input-group">
+                            <input type="email" id="newsletterEmail" placeholder="Enter your email address" required />
+                            <button type="submit" class="newsletter-btn" id="newsletterBtn">
+                                <span>Subscribe</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div id="newsletterMessage" class="newsletter-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
@@ -182,7 +206,7 @@
             </div>
         </div>
     </section>
-
+    
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
@@ -270,41 +294,16 @@
         </div>
     </section>
 
-    <!-- Newsletter Section -->
-    <section class="newsletter">
-        <div class="container">
-            <div class="newsletter-content fade-in">
-                <div class="newsletter-text">
-                    <h2>Stay Updated</h2>
-                    <p>Subscribe to our newsletter for the latest ranching insights, AI updates, and platform news.</p>
-                </div>
-                <div class="newsletter-form-container">
-                    <form id="newsletterForm" class="newsletter-form">
-                        <div class="newsletter-input-group">
-                            <input type="email" id="newsletterEmail" placeholder="Enter your email address" required />
-                            <button type="submit" class="newsletter-btn" id="newsletterBtn">
-                                <span>Subscribe</span>
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                        <div id="newsletterMessage" class="newsletter-message"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-bottom">
                 <div class="footer-branding">
-                    <a href="https://innova8s.com/" target="_blank" rel="noopener" style="text-decoration: none">
-                        <img src="{% static 'easyranch/Innova8s-ransparent-ogo-original.png' %}" alt="Innova8s" />
-                    </a>
-                    <p>
-                        &copy; 2025 EasyRanch. All rights reserved. Revolutionizing ranch
-                        management with AI.
+                    <img src="{% static 'easyranch/Innova8s.svg' %}" alt="EasyRanch" class="footer-logo">
+
+                    <p class="footer-text">
+                        <strong>EasyRanch</strong> &copy; 2025. All rights reserved. 
+                        Revolutionizing ranch management with AI.
                     </p>
                 </div>
                 <div class="social-media">

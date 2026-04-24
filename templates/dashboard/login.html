@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EasyRanch Portal Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background:
+                linear-gradient(rgba(5, 20, 18, 0.88), rgba(5, 20, 18, 0.92)),
+                url("{% static 'images/hero-bg.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 430px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.96);
+            color: #10231f;
+            border-radius: 22px;
+            padding: 38px 34px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-logo {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 30px;
+            color: #146c43;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            margin: 8px 0 0;
+            color: #5f6f69;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #243b35;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d6e2dc;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            background: #f8fbf9;
+        }
+
+        input:focus {
+            border-color: #1f9d55;
+            box-shadow: 0 0 0 3px rgba(31, 157, 85, 0.12);
+            background: #ffffff;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #16834a, #22c55e);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, #126b3d, #16a34a);
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #5f6f69;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #146c43;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+
+            <div class="brand">
+                {% if site_setting and site_setting.hero_logo %}
+                    <img src="{{ site_setting.hero_logo.url }}" class="brand-logo" alt="EasyRanch Logo">
+                {% endif %}
+
+                <h1>
+                    {% if site_setting and site_setting.site_name %}
+                        {{ site_setting.site_name }}
+                    {% else %}
+                        EasyRanch
+                    {% endif %}
+                </h1>
+
+                <p>Admin Portal Login</p>
+            </div>
+
+            {% if form.errors %}
+                <div class="error">
+                    Invalid username or password. Please try again.
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username">Username</label>
+                    {{ form.username }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password">Password</label>
+                    {{ form.password }}
+                </div>
+
+                <button type="submit" class="login-btn">Login to Dashboard</button>
+            </form>
+
+            <a href="{% url 'homepage' %}" class="back-link">← Back to Website</a>
+        </div>
+
+        <div class="footer-text">
+            Secure dashboard access for EasyRanch administrators
+        </div>
+    </div>
+</body>
+</html>

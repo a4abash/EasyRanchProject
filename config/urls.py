@@ -19,6 +19,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from core import views, views_dashboard
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +27,8 @@ urlpatterns = [
     path('chat/', views.chat, name='chat'),
     path('subscribe-newsletter/', views.subscribe_newsletter, name='subscribe_newsletter'),
     path('unsubscribe/', views.unsubscribe_newsletter, name='unsubscribe_newsletter'),
+    path('portal/', auth_views.LoginView.as_view(template_name='dashboard/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='homepage'), name='logout'),
 
     # Custom Dashboard
     path('dashboard/', views_dashboard.DashboardHome.as_view(), name='dashboard_home'),
